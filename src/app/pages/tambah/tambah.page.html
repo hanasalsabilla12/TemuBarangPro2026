@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar class="header-ungu">
+    <ion-title>📦 TemuBarang</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg">
+
+  <div class="container">
+    <div class="card">
+
+      <h2>➕ Tambah Laporan</h2>
+
+      <ion-input placeholder="Nama Barang" [(ngModel)]="nama"></ion-input>
+      <ion-input placeholder="Lokasi" [(ngModel)]="lokasi"></ion-input>
+      <ion-input placeholder="Kontak" [(ngModel)]="kontak"></ion-input>
+
+      <ion-select placeholder="Pilih Jenis" [(ngModel)]="jenis">
+        <ion-select-option value="Barang Hilang">Barang Hilang</ion-select-option>
+        <ion-select-option value="Barang Ditemukan">Barang Ditemukan</ion-select-option>
+      </ion-select>
+
+      <input type="file" (change)="uploadFoto($event)" #fileInput />
+
+      <ion-button expand="block" (click)="simpan()">SIMPAN</ion-button>
+      <ion-button expand="block" color="success" (click)="exportPDF()">EXPORT PDF</ion-button>
+      <ion-button expand="block" routerLink="/home">LIHAT LAPORAN</ion-button>
+
+    </div>
+  </div>
+
+</ion-content>

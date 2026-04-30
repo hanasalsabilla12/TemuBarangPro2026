@@ -1,0 +1,112 @@
+.header-ungu {
+  --background: linear-gradient(90deg, #6a5acd, #8a2be2);
+  color: white;
+}
+
+.bg {
+  --background: linear-gradient(180deg, #6a5acd, #8a2be2);
+}
+
+/* GRID 2 KOLOM */
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  padding: 10px;
+
+  min-height: 100vh; /* 🔥 biar ga keliatan pendek */
+}
+
+/* CARD */
+.item {
+  background: #1e1e1e;
+  border-radius: 14px;
+  padding: 10px;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+/* GAMBAR */
+.item img {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  background: #000;
+  border-radius: 10px;
+}
+
+/* INFO */
+.info {
+  margin-top: 8px;
+  font-size: 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nama {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* STATUS */
+.badge {
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.hijau {
+  background: #00c853;
+}
+
+.kuning {
+  background: #ffcc00;
+  color: black;
+}
+
+/* BUTTON */
+ion-button.btn-sedang {
+  --background: #3b82f6;
+
+  width: 100% !important;
+  height: 32px;
+
+  font-size: 12px;
+  border-radius: 14px;
+  margin-top: 8px;
+}
+
+ion-button.btn-sedang[disabled] {
+  --background: #00c853;
+  opacity: 0.7;
+}
+
+/* BACK */
+.back {
+  font-size: 34px;
+}
+
+/* EMPTY STATE */
+.empty {
+  text-align: center;
+  color: white;
+  margin-top: 80px;
+}
+
+.empty ion-icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.empty h3 {
+  margin: 0;
+}
