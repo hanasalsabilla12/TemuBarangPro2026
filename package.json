@@ -25,6 +25,8 @@
     "@capacitor/cli": "^8.3.1",
     "@capacitor/core": "^8.3.1",
     "@ionic/angular": "^8.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "ionicons": "^7.0.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
@@ -58,5 +60,17 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.0"
+  },
+  "description": "",
+  "main": "karma.conf.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanasalsabilla12/TemuBarangPro2026.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hanasalsabilla12/TemuBarangPro2026/issues"
   }
 }

@@ -1,23 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // 🔥 TAMBAH INI
 import { StorageService } from '../../services/storage.service';
 
 @Component({
-  standalone: true,
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
-  imports: [IonicModule, FormsModule, CommonModule, RouterModule]
+  standalone: true,
+  imports: [IonicModule, CommonModule, FormsModule]
 })
 export class HomePage implements OnInit {
 
-  barangList: any[] = [];
-  searchText = '';
+  dataBarang: any[] = [];
+  searchText: string = '';
 
-  constructor(private storage: StorageService) {}
+  constructor(
+    private storage: StorageService,
+    private router: Router // 🔥 TAMBAH INI
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -28,51 +31,36 @@ export class HomePage implements OnInit {
   }
 
   loadData() {
-    let data = this.storage.getData();
-    const now = Date.now();
-
-    // auto delete 3 hari
-    data = data.filter(item => now - item.createdAt < 3 * 24 * 60 * 60 * 1000);
-
-    data = data.map(item => ({
-      ...item,
-      status: item.status || 'Belum Ditemukan'
-    }));
-
-    this.storage.saveData(data);
-    this.barangList = data;
+    this.dataBarang = this.storage.getData();
   }
 
   getFilteredData() {
-    return this.barangList.filter(item =>
-      item.nama.toLowerCase().includes(this.searchText.toLowerCase())
+    return this.dataBarang.filter(item =>
+      item.nama?.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
   ubahStatus(item: any) {
-    if (item.status === 'Telah Ditemukan') return;
-
-    item.status = 'Telah Ditemukan';
-    this.storage.saveData(this.barangList);
-    this.loadData();
-  }
-
-  sisaWaktu(item: any) {
-    const sisa = 3 * 24 * 60 * 60 * 1000 - (Date.now() - item.createdAt);
-
-    const hari = Math.floor(sisa / (1000 * 60 * 60 * 24));
-    const jam = Math.floor((sisa / (1000 * 60 * 60)) % 24);
-
-    return `Sisa ${hari} hari ${jam} jam`;
-  }
-
-  formatTanggal(time: number) {
-    return new Date(time).toLocaleString('id-ID');
+    item.status = "Telah Ditemukan";
+    localStorage.setItem("laporan_barang", JSON.stringify(this.dataBarang));
   }
 
   tujuan(item: any) {
-    return item.jenis === 'Barang Ditemukan'
-      ? 'Mencari pemilik barang'
-      : 'Mencari penemu barang';
+    return item.jenis === "Barang Hilang"
+      ? "Mencari pemilik"
+      : "Menunggu diambil";
+  }
+
+  formatTanggal(date: any) {
+    return new Date(date).toLocaleString();
+  }
+
+  sisaWaktu(item: any) {
+    return "3 hari";
+  }
+
+  // 🔥 INI YANG BUAT TOMBOL PANAH JALAN
+  goBack() {
+    this.router.navigate(['/tambah']);
   }
 }
