@@ -1,26 +1,53 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // 🔥 TAMBAH INI
+import { Router } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonButtons, 
+  IonButton, 
+  IonTitle, 
+  IonContent, 
+  IonSearchbar, 
+  IonIcon 
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { searchOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule, 
+    FormsModule,
+    IonHeader, 
+    IonToolbar, 
+    IonButtons, 
+    IonButton, 
+    IonTitle, 
+    IonContent, 
+    IonSearchbar, 
+    IonIcon
+  ]
 })
 export class HomePage implements OnInit {
 
   dataBarang: any[] = [];
+
+  filteredData: any[] = [];
+
   searchText: string = '';
 
   constructor(
     private storage: StorageService,
-    private router: Router // 🔥 TAMBAH INI
-  ) {}
+    private router: Router
+  ) {
+    addIcons({ searchOutline });
+  }
 
   ngOnInit() {
     this.loadData();
@@ -31,36 +58,98 @@ export class HomePage implements OnInit {
   }
 
   loadData() {
-    this.dataBarang = this.storage.getData();
+
+    this.dataBarang =
+      this.storage.getData() || [];
+
+    this.filteredData =
+      [...this.dataBarang];
   }
 
-  getFilteredData() {
-    return this.dataBarang.filter(item =>
-      item.nama?.toLowerCase().includes(this.searchText.toLowerCase())
+  /* SEARCH SECURE FOR ALL MOBILE DEVICES */
+  onSearch() {
+    const val = this.searchText || '';
+
+    if (val.trim() === '') {
+      this.filteredData = [...this.dataBarang];
+      return;
+    }
+
+    const keyword = val.toLowerCase().trim();
+
+    this.filteredData = this.dataBarang.filter(
+      (item: any) => {
+        const namaMatch = item.nama && item.nama.toLowerCase().includes(keyword);
+        const lokasiMatch = item.lokasi && item.lokasi.toLowerCase().includes(keyword);
+        const jenisMatch = item.jenis && item.jenis.toLowerCase().includes(keyword);
+
+        return namaMatch || lokasiMatch || jenisMatch;
+      }
     );
   }
 
+  /* STATUS */
   ubahStatus(item: any) {
-    item.status = "Telah Ditemukan";
-    localStorage.setItem("laporan_barang", JSON.stringify(this.dataBarang));
+
+    item.status =
+      'Telah Ditemukan';
+
+    localStorage.setItem(
+      'laporan_barang',
+      JSON.stringify(this.dataBarang)
+    );
+
+    this.loadData();
   }
 
+  /* KETERANGAN */
   tujuan(item: any) {
-    return item.jenis === "Barang Hilang"
-      ? "Mencari pemilik"
-      : "Menunggu diambil";
+
+    return item.jenis ===
+      'Barang Hilang'
+      ? 'Mencari pemilik'
+      : 'Menunggu diambil';
   }
 
+  /* FORMAT TANGGAL */
   formatTanggal(date: any) {
-    return new Date(date).toLocaleString();
+
+    return new Date(date)
+      .toLocaleString('id-ID');
   }
 
+  /* SISA WAKTU */
   sisaWaktu(item: any) {
-    return "3 hari";
+
+    const created =
+      new Date(item.createdAt)
+        .getTime();
+
+    const now =
+      new Date().getTime();
+
+    const expired =
+      created +
+      3 * 24 * 60 * 60 * 1000;
+
+    const selisih =
+      expired - now;
+
+    if (selisih <= 0) {
+      return 'Expired';
+    }
+
+    const jam = Math.floor(
+      selisih /
+      (1000 * 60 * 60)
+    );
+
+    return `${jam} jam lagi`;
   }
 
-  // 🔥 INI YANG BUAT TOMBOL PANAH JALAN
+  /* BACK */
   goBack() {
     this.router.navigate(['/tambah']);
   }
+
 }

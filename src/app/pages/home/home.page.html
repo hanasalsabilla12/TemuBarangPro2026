@@ -14,61 +14,102 @@
 
 <ion-content class="bg">
 
-  <ion-searchbar [(ngModel)]="searchText"></ion-searchbar>
+  <!-- SEARCH -->
+  <ion-searchbar
+    debounce="300"
+    [(ngModel)]="searchText"
+    (ionInput)="onSearch()"
+    placeholder="Cari barang...">
+  </ion-searchbar>
 
   <!-- EMPTY STATE -->
-  <div class="empty" *ngIf="getFilteredData().length === 0">
+  <div
+    class="empty"
+    *ngIf="filteredData.length === 0">
+
     <ion-icon name="search-outline"></ion-icon>
+
     <h3>Barang tidak ditemukan</h3>
+
     <p>Coba kata kunci lain</p>
+
   </div>
 
   <!-- LIST -->
-  <div class="list" *ngIf="getFilteredData().length > 0">
+  <div
+    class="list"
+    *ngIf="filteredData.length > 0">
 
-    <div class="item" *ngFor="let item of getFilteredData()">
+    <div
+      class="item"
+      *ngFor="let item of filteredData">
 
-      <img *ngIf="item.foto" [src]="item.foto" />
+      <img
+        *ngIf="item.foto"
+        [src]="item.foto" />
 
       <div class="info">
 
-        <div class="nama">{{ item.nama }}</div>
+        <div class="nama">
+          {{ item.nama }}
+        </div>
 
-        <div>📍 {{ item.lokasi }}</div>
-        <div>📞 {{ item.kontak }}</div>
+        <div>
+          📍 {{ item.lokasi }}
+        </div>
 
-        <div>📌 {{ item.jenis }}</div>
+        <div>
+          📞 {{ item.kontak }}
+        </div>
+
+        <div>
+          📌 {{ item.jenis }}
+        </div>
 
         <div class="desc">
           🔍 {{ tujuan(item) }}
         </div>
 
-        <div>🕒 {{ formatTanggal(item.createdAt) }}</div>
+        <div>
+          🕒 {{ formatTanggal(item.createdAt) }}
+        </div>
 
-        <div class="auto">⚠ Auto delete 3 hari</div>
+        <div class="auto">
+          ⚠ Auto delete 3 hari
+        </div>
 
-        <div class="sisa">⏳ {{ sisaWaktu(item) }}</div>
+        <div class="sisa">
+          ⏳ {{ sisaWaktu(item) }}
+        </div>
 
         <!-- STATUS -->
-        <div 
+        <div
           class="badge"
           [ngClass]="{
             'hijau': item.status === 'Telah Ditemukan',
             'kuning': item.status === 'Belum Ditemukan'
           }">
+
           {{ item.status }}
+
         </div>
 
         <div class="btn-wrapper">
-          <ion-button 
+
+          <ion-button
             size="small"
             class="btn-sedang"
             (click)="ubahStatus(item)"
             [disabled]="item.status === 'Telah Ditemukan'">
 
-            {{ item.status === 'Telah Ditemukan' ? 'SELESAI ✔' : 'SELESAI' }}
+            {{
+              item.status === 'Telah Ditemukan'
+              ? 'SELESAI ✔'
+              : 'SELESAI'
+            }}
 
           </ion-button>
+
         </div>
 
       </div>

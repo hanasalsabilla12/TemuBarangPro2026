@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+// Plugin simpan file ke Android
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 @Component({
   standalone: true,
@@ -17,26 +22,29 @@ export class TambahPage {
   nama = '';
   lokasi = '';
   kontak = '';
-  jenis = 'Barang Hilang';   // 🔥 default biar jelas
+  jenis = 'Barang Hilang';
   foto: any = '';
 
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(private storage: StorageService) {}
 
-  // 🔥 upload foto
+  // Upload foto
   uploadFoto(event: any) {
     const file = event.target.files[0];
+
     if (!file) return;
 
     const reader = new FileReader();
+
     reader.onload = () => {
       this.foto = reader.result;
     };
+
     reader.readAsDataURL(file);
   }
 
-  // 🔥 simpan data
+  // Simpan data
   simpan() {
     if (!this.nama || !this.lokasi || !this.kontak) {
       alert('Isi semua data!');
@@ -47,13 +55,8 @@ export class TambahPage {
       nama: this.nama,
       lokasi: this.lokasi,
       kontak: this.kontak,
-
-      // 🔥 JENIS TIDAK BERUBAH
       jenis: this.jenis || 'Barang Hilang',
-
-      // 🔥 STATUS TERPISAH (INI PENTING)
       status: 'Belum Ditemukan',
-
       foto: this.foto,
       createdAt: Date.now()
     };
@@ -62,7 +65,7 @@ export class TambahPage {
 
     alert('Data berhasil disimpan!');
 
-    // 🔥 RESET FORM
+    // Reset form
     this.nama = '';
     this.lokasi = '';
     this.kontak = '';
@@ -74,38 +77,47 @@ export class TambahPage {
     }
   }
 
-  // 🔥 EXPORT PDF
-  exportPDF() {
-    import('jspdf').then(jsPDFModule => {
-      import('jspdf-autotable').then(autoTableModule => {
+  // Export PDF ke HP
+  async exportPDF() {
+    try {
+      const doc = new jsPDF();
+      const data = this.storage.getData() || [];
 
-        const jsPDF = jsPDFModule.default;
-        const doc = new jsPDF();
-        const autoTable = autoTableModule.default;
+      if (!Array.isArray(data) || data.length === 0) {
+        alert('Data kosong!');
+        return;
+      }
 
-        const data = this.storage.getData();
+      const rows = data.map((item: any, i: number) => [
+        i + 1,
+        item.nama || '-',
+        item.lokasi || '-',
+        item.kontak || '-',
+        item.jenis || '-',
+        item.status || 'Belum Ditemukan'
+      ]);
 
-        if (data.length === 0) {
-          alert('Data kosong!');
-          return;
-        }
-
-        const rows = data.map((item: any, i: number) => [
-          i + 1,
-          item.nama,
-          item.lokasi,
-          item.kontak,
-          item.jenis,
-          item.status || 'Belum Ditemukan' // 🔥 tambahan status
-        ]);
-
-        autoTable(doc, {
-          head: [['No', 'Nama', 'Lokasi', 'Kontak', 'Jenis', 'Status']],
-          body: rows
-        });
-
-        doc.save('laporan.pdf');
+      autoTable(doc, {
+        head: [['No', 'Nama', 'Lokasi', 'Kontak', 'Jenis', 'Status']],
+        body: rows
       });
-    });
+
+      // Convert PDF ke base64
+      const pdfOutput = doc.output('datauristring');
+      const base64Data = pdfOutput.split(',')[1];
+
+      // Simpan ke storage HP
+      await Filesystem.writeFile({
+        path: 'laporan.pdf',
+        data: base64Data,
+        directory: Directory.Documents
+      });
+
+      alert('PDF berhasil disimpan di folder Documents!');
+
+    } catch (error) {
+      console.error('Error export PDF:', error);
+      alert('Gagal menyimpan PDF.');
+    }
   }
 }

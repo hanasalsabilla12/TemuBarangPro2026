@@ -7,26 +7,74 @@
 <ion-content class="bg">
 
   <div class="container">
+
     <div class="card">
 
       <h2>➕ Tambah Laporan</h2>
 
-      <ion-input placeholder="Nama Barang" [(ngModel)]="nama"></ion-input>
-      <ion-input placeholder="Lokasi" [(ngModel)]="lokasi"></ion-input>
-      <ion-input placeholder="Kontak" [(ngModel)]="kontak"></ion-input>
+      <input
+        type="text"
+        placeholder="Nama Barang"
+        [(ngModel)]="nama"
+        class="custom-input"
+      />
 
-      <ion-select placeholder="Pilih Jenis" [(ngModel)]="jenis">
-        <ion-select-option value="Barang Hilang">Barang Hilang</ion-select-option>
-        <ion-select-option value="Barang Ditemukan">Barang Ditemukan</ion-select-option>
-      </ion-select>
+      <input
+        type="text"
+        placeholder="Lokasi"
+        [(ngModel)]="lokasi"
+        class="custom-input"
+      />
 
-      <input type="file" (change)="uploadFoto($event)" #fileInput />
+      <input
+        type="text"
+        placeholder="Kontak"
+        [(ngModel)]="kontak"
+        class="custom-input"
+      />
 
-      <ion-button expand="block" (click)="simpan()">SIMPAN</ion-button>
-      <ion-button expand="block" color="success" (click)="exportPDF()">EXPORT PDF</ion-button>
-      <ion-button expand="block" routerLink="/home">LIHAT LAPORAN</ion-button>
+      <select
+        [(ngModel)]="jenis"
+        class="custom-input"
+      >
+        <option value="Barang Hilang">
+          Barang Hilang
+        </option>
+
+        <option value="Barang Ditemukan">
+          Barang Ditemukan
+        </option>
+      </select>
+
+      <input
+        type="file"
+        (change)="uploadFoto($event)"
+        #fileInput
+      />
+
+      <button
+        class="btn"
+        (click)="simpan()"
+      >
+        SIMPAN
+      </button>
+
+      <button
+        class="btn green"
+        (click)="exportPDF()"
+      >
+        EXPORT PDF
+      </button>
+
+      <button
+        class="btn blue"
+        routerLink="/home"
+      >
+        LIHAT LAPORAN
+      </button>
 
     </div>
+
   </div>
 
 </ion-content>
